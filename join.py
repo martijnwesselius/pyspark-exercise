@@ -1,8 +1,10 @@
 import os
+import sys
 import argparse
 from typing import Dict, List
-
-import pyspark
+import logging
+from logging.handlers import RotatingFileHandler
+import pandas as pd
 from pyspark.sql import SparkSession, DataFrame, Column
 # from chispa.column_comparer import assert_column_equality
 
@@ -36,12 +38,39 @@ def parser():
                         help='Countries to filter from the data')
     args = parser.parse_args()
 
+    check_fpaths(args)
+    check_countries(args)
+
     return args
+
+
+def check_fpaths(args):
+    """ ... """
+
+    current_path = os.getcwd()
+
+    fpath_1 = os.path.join(current_path, args.fpath_1)
+    if not os.path.exists(fpath_1):
+        raise Exception('Path to first file does not exists!')
     
+    fpath_2 = os.path.join(current_path, args.fpath_2)
+    if not os.path.exists(fpath_2):
+        raise Exception('Path to second file does not exists!')
+       
+
+def check_countries(args):
+    """ ... """
+
+    pd_df1 = pd.read_csv(args.fpath_1, header=0)
+    all_countries = pd_df1['country'].unique()
+
+    if not (set(args.countries).issubset(all_countries)):
+        raise Exception('Specified countries are not (all) contained in data. \
+                        Choose from France, Netherlands, United Kingdom, United States')
+
 
 def filter(df: DataFrame, col_object: Column, values: List) -> DataFrame:
     """ ... """
-
     return df.filter(col_object.isin(values))
 
 
@@ -74,11 +103,46 @@ def main():
 
     args = parser()
 
-    # check arguments
-
     # Create Spark session
     # master('local').appname('chispa').
     spark = SparkSession.builder.getOrCreate()
+
+
+
+    # logging.basicConfig()
+    # To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+
+
+    # logger = logging.getLogger(__name__)
+
+
+
+    log4jLogger = spark._jvm.org.apache.log4j
+    log4jLogger.LogManager.getRootLogger().setLevel(log4jLogger.Level.DEBUG)
+    logger = log4jLogger.LogManager.getLogger(__name__)
+    logger.info("pyspark script logger initialized")
+
+    # print(log4jLogger.LogManager.getRootLogger().getLevel())
+    # print(logger.getLevel())
+
+    # handler = RotatingFileHandler('join.log', maxBytes=100, backupCount=3)
+    # handler.setLevel(logging.DEBUG)
+
+    # formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    # handler.setFormatter(formatter)
+
+    # logger.addHandler(handler)
+
+
+    # sh = logging.StreamHandler(sys.stdout)
+    # sh.setLevel(logging.DEBUG)
+    # logger.addHandler(sh)
+
+    # print(logger.handlers)
+
+
+
+    # EXTRACT
 
     # Create Spark dataframes from csv
     df1 = spark.read.csv(args.fpath_1, header=True)
@@ -87,9 +151,8 @@ def main():
     df2 = spark.read.csv(args.fpath_2, header=True)
     df2 = df2.select(['id', 'btc_a', 'cc_t'])
     
-    print(type(df1))
-    print(type(df1.id))
-    print(type(args))
+
+    # TRANSFORM
 
     # Join dataframes
     # assert_df_equality(df1, df2, ignore_row_order=True)
@@ -104,18 +167,15 @@ def main():
     # Filter countries
     df = filter(df, df.country, args.countries)
 
+
+    # LOAD
+
     # Write dataframe to csv
     # write_output(df)
 
 
     df.show()
-
-
-    # print(df.select('country').distinct().collect())
-    # df.printSchema()
-
     
 
 if __name__ == "__main__":
-    """ This is executed when run from the command line """
     main()
