@@ -8,13 +8,10 @@ import pandas as pd
 from pyspark.sql import SparkSession, DataFrame, Column
 # from chispa.column_comparer import assert_column_equality
 
-
 """
 Module Docstring
 
-C:/Users/Martijn/miniconda3/python.exe 
-"c:/Users/Martijn/Desktop/PySpark Exercise ABN Amro/join.py" 
---fpath_1 'data/dataset_one.csv' --fpath_2 'data/dataset_two.csv' --countries 'United Kingdom' 'Netherlands'
+join.py --fpath_1 'data/dataset_one.csv' --fpath_2 'data/dataset_two.csv' --countries 'United Kingdom' 'Netherlands'
 
 """
 
@@ -104,13 +101,9 @@ def main():
     args = parser()
 
     # Create Spark session
-    # master('local').appname('chispa').
+    # .master('local').appname('chispa')
     spark = SparkSession.builder.getOrCreate()
 
-
-
-    # logging.basicConfig()
-    # To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
 
 
     # logger = logging.getLogger(__name__)
