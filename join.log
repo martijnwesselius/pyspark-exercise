@@ -1,0 +1,5 @@
+2023-09-08 12:42:58,004 - __main__ - INFO - Transformation end
+2023-09-08 12:42:58,426 - __main__ - INFO - Load start
+2023-09-08 12:42:58,682 - __main__ - INFO - DataFrame written to CSV
+2023-09-08 12:42:58,682 - __main__ - INFO - Load end
+2023-09-08 12:42:58,682 - __main__ - INFO - Program end
