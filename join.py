@@ -26,7 +26,11 @@ logger.addHandler(handler)
 
 def parser():
     """ 
-        Parser() initializes argument parser and checks if input is valid
+        Initializes argument parser, asks input and calls input checks
+        
+        :param: -
+        :returns: parsed arguments <class 'argparse.Namespace'>
+        :raises: -
     """
 
     logger.info("Argument parser start")
@@ -53,8 +57,11 @@ def parser():
 
 def check_fpaths(args):
     """
-        Checks if the parsed filepaths do exists
-        Throws exception otherwise
+        Checks if the parsed filepaths do exists and throws exception otherwise
+
+        :param args: parsed arguments <class 'argparse.Namespace'>
+        :returns: -
+        :raises Exception: invalid filepaths
     """
     
     current_path = os.getcwd()
@@ -70,8 +77,11 @@ def check_fpaths(args):
 
 def check_countries(args):
     """ 
-        Checks if parsed countries are present in the data  
-        Throws exception otherwise
+        Checks if parsed countries are present in the data and throws exception otherwise
+
+        :param args: parsed arguments <class 'argparse.Namespace'>
+        :returns: -
+        :raises Exception: non-existent countries
     """
 
     pd_df1 = pd.read_csv(args.fpath_1, header=0)
@@ -83,8 +93,12 @@ def check_countries(args):
 
 def extract(spark, args) -> DataFrame:
     """
-        Extract() reads CSV files from `args.fpath_1/2`
-        to create Dataframes `df1` and `df2`
+        Reads CSV files from arguments and create Spark DataFrames
+
+        :param spark: SparkSession <class 'pyspark.sql.session.SparkSession'>
+        :param args: parsed arguments <class 'argparse.Namespace'>
+        :returns: two DataFrames <class 'pyspark.sql.dataframe.DataFrame'>
+        :raises: -
     """
 
     logger.info('Extraction start')
@@ -104,9 +118,13 @@ def extract(spark, args) -> DataFrame:
 
 def transform(df1: DataFrame, df2: DataFrame, args) -> DataFrame:
     """
-        Transform() joins DataFrames `df1` and `df2` into 
-        DataFrame `df`, renames columns of `df` 
-        and filters its  rows
+        Joins DataFrames into a single DataFrame and 
+        calls for renaming of columns and filtering of rows
+
+        :param df1: first DataFrame <class 'pyspark.sql.dataframe.DataFrame'>
+        :param df2: second DataFrame <class 'pyspark.sql.dataframe.DataFrame'>
+        :returns: joined and filtered DataFrame <class 'pyspark.sql.dataframe.DataFrame'>
+        :raises: -
     """
 
     logger.info('Transformation start')
@@ -132,7 +150,12 @@ def transform(df1: DataFrame, df2: DataFrame, args) -> DataFrame:
 
 def rename(df: DataFrame, col_names: Dict) -> DataFrame:
     """ 
-        Renames DataFrame `df` accordng to names provided in `col_names`
+        Renames DataFrame columns with provided names
+
+        :param df: DataFrame <class 'pyspark.sql.dataframe.DataFrame'>
+        :param col_names: Dictionary with current and new column names <class 'dict'>
+        :returns: DataFrame with renamed columns <class 'pyspark.sql.dataframe.DataFrame'>
+        :raises: -
     """
 
     for col in col_names.keys():
@@ -143,14 +166,24 @@ def rename(df: DataFrame, col_names: Dict) -> DataFrame:
 
 def filter(df: DataFrame, col_object: Column, values: List) -> DataFrame:
     """
-        Filters DataFrame `df` on the countries provided in `args.countries`
+        Filters DataFrame rows on the provided countries
+
+        :param df: DataFrame <class 'pyspark.sql.dataframe.DataFrame'>
+        :param col_object: DataFrame 'country' colunm  <class 'pyspark.sql.dataframe.Column'>
+        :param values: List with countries <class 'list'>
+        :returns: DataFrame only containing rows with specified countries <class 'pyspark.sql.dataframe.DataFrame'>
+        :raises: -
     """
     return df.filter(col_object.isin(values))
 
 
 def save(df: DataFrame):
     """ 
-        Save() writes DataFrame `df` to CSV file
+        Writes DataFrame to CSV file in new directory
+
+        :param df: DataFrame <class 'pyspark.sql.dataframe.DataFrame'>
+        :returns: -
+        :raises: -
     """  
 
     logger.info("Load start")
@@ -173,9 +206,12 @@ def save(df: DataFrame):
 
 def main():
     """
-        Main() creates argument parser, 
-        initializes Spark session and 
-        extracts, transforms and saves the data 
+        Creates argument parser, initializes Sparksession and
+        call for the extraction, transformation and storage of the data
+        
+        :param: -
+        :returns: -
+        :raises: -
     """
 
     logger.info("Program start")
