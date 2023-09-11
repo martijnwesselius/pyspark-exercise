@@ -1,15 +1,6 @@
 # PySpark Exercise
 
-This is a small exercise which I had to make as an assignment for a job application. The program joins two specified CSV files using PySpark and applies some minor transformations and filtering.
-
-
-<!-- ## Installation
-
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
-
-```bash
-pip install foobar
-``` -->
+This is a small programming exercise which I made as an assignment for a job application. The program reads two CSV files provided by the user. These files are red as two Spark DataFrames and joined together into a single DataFrame. The columns of this DataFrame are renamed and the rows are filtered on the countries provided by the user. The resulting DataFrame is then saved as an CSV file and stored in the **client data** directory.
 
 ## Usage
 

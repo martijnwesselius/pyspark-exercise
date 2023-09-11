@@ -133,7 +133,6 @@ def transform(df1: DataFrame, df2: DataFrame, args) -> DataFrame:
                  "btc_a":"bitcoin_address", 
                  "cc_t":"credit_card_type"}
 
-    # assert_df_equality(df1, df2, ignore_row_order=True)
     df = df1.join(df2, on='id', how='leftouter')
     logger.info("DataFrames joined")
     
@@ -229,7 +228,7 @@ def main():
     logger.info("Spark session created")
 
     # EXTRACT
-    df1, df2 = extract(spark, args)
+    df1, df2 = extract(spark, args) # assert_df_equality(df1, df2, ignore_row_order=True)
 
     # TRANSFORM
     df = transform(df1, df2, args)
